@@ -4,5 +4,5 @@ Here's my repository with the source code for mods I wrote for Hollow Knight: Si
 
 ## Currently includes
 
-- [SwapCrestOnHit]: Swaps Hornet's crest every time she takes damage.
+- [SwapCrestOnHit](https://www.nexusmods.com/hollowknightsilksong/mods/879): Swaps Hornet's crest every time she takes damage.
 
