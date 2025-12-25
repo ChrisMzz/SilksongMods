@@ -5,7 +5,7 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 
-[BepInPlugin("com.chrismzz.swapcrestonhit", "Swap Crest On Hit", "1.1.0")]
+[BepInPlugin("com.chrismzz.swapcrestonhit", "Swap Crest On Hit", "1.1.1")]
 
 public class SwapCrestOnHit : BaseUnityPlugin
 {
@@ -36,8 +36,11 @@ public class SwapCrestOnHit : BaseUnityPlugin
         int crestCount = ToolItemManager.GetUnlockedCrestsCount();
         foreach (ToolCrest crest in allCrests)
         {
-            if (!crest.IsHidden && crest.IsBaseVersion && crest.IsUnlocked)
-                availableCrests.Add(crest);
+            if (!crest.IsHidden && crest.IsUnlocked)
+            {
+                if (!crest.IsUpgradedVersionUnlocked)
+                    availableCrests.Add(crest);
+            } 
         }
         bool canSwap = (crestCount > 1 && __instance.playerData.CurrentCrestID != Gameplay.CursedCrest.name && __instance.playerData.CurrentCrestID != Gameplay.CloaklessCrest.name);
         List<ToolCrest> crestsList = crestSanity.Value ? availableCrests : allCrests;
