@@ -5,7 +5,7 @@ using HarmonyLib;
 using System;
 using System.Collections.Generic;
 
-[BepInPlugin("com.chrismzz.swapcrestonhit", "Swap Crest On Hit", "1.1.1")]
+[BepInPlugin("com.chrismzz.swapcrestonhit", "Swap Crest On Hit", "1.1.2")]
 
 public class SwapCrestOnHit : BaseUnityPlugin
 {
@@ -57,7 +57,7 @@ public class SwapCrestOnHit : BaseUnityPlugin
                 crestIdx = rnd.Next(0, count);
                 newCrest = crestsList[crestIdx];
             }
-            __instance.playerData.CurrentCrestID = newCrest.name;
+            ToolItemManager.SetEquippedCrest(newCrest.name);
             ToolItemManager.SendEquippedChangedEvent(force: true);
         }
         // sometimes ResetAllCrestState seems to remove silk from the player
