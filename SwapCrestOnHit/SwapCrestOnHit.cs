@@ -1,18 +1,23 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
+using BepInEx.Logging;
 using GlobalSettings;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
 
-[BepInPlugin("com.chrismzz.swapcrestonhit", "Swap Crest On Hit", "1.1.2")]
+[BepInPlugin("com.chrismzz.swapcrestonhit", "Swap Crest On Hit", "1.2.0")]
 
 public class SwapCrestOnHit : BaseUnityPlugin
 {
     public static readonly Random rnd = new Random();
     internal static ConfigEntry<bool> crestSanity;
+    public static ManualLogSource Logger;
+    public static int cooldown;
+
     private void Awake()
     {
+        Logger = base.Logger;
 
         Logger.LogInfo("SwapCrestOnHit loaded and initialized.");
         crestSanity = Config.Bind(
@@ -21,6 +26,7 @@ public class SwapCrestOnHit : BaseUnityPlugin
             true,
             "Only use unlocked and available crests. Set to false if you want pure chaos."
         );
+        cooldown = 100;
 
 
         Harmony.CreateAndPatchAll(typeof(SwapCrestOnHit), null);
@@ -30,10 +36,10 @@ public class SwapCrestOnHit : BaseUnityPlugin
     [HarmonyPostfix]
     private static void TakeDamagePostfix(HeroController __instance)
     {
+        if (cooldown < 100) { return;}
         int currentSilk = __instance.playerData.silk;
         List<ToolCrest> allCrests = ToolItemManager.GetAllCrests();
         List<ToolCrest> availableCrests = new List<ToolCrest>();
-        int crestCount = ToolItemManager.GetUnlockedCrestsCount();
         foreach (ToolCrest crest in allCrests)
         {
             if (!crest.IsHidden && crest.IsUnlocked)
@@ -42,28 +48,36 @@ public class SwapCrestOnHit : BaseUnityPlugin
                     availableCrests.Add(crest);
             } 
         }
-        bool canSwap = (crestCount > 1 && __instance.playerData.CurrentCrestID != Gameplay.CursedCrest.name && __instance.playerData.CurrentCrestID != Gameplay.CloaklessCrest.name);
+        bool canSwap = (availableCrests.Count > 1 && __instance.playerData.CurrentCrestID != Gameplay.CursedCrest.name && __instance.playerData.CurrentCrestID != Gameplay.CloaklessCrest.name);
         List<ToolCrest> crestsList = crestSanity.Value ? availableCrests : allCrests;
-        int count = crestSanity.Value ? crestCount : allCrests.Count;
-        if (!crestSanity.Value)
-            crestsList.Add(Gameplay.CursedCrest);
         if (canSwap || !crestSanity.Value)
         {
             __instance.ResetAllCrestState();
-            int crestIdx = rnd.Next(0, count);
+            int crestIdx = rnd.Next(0, crestsList.Count);
             ToolCrest newCrest = crestsList[crestIdx];
             while (__instance.playerData.CurrentCrestID == newCrest.name)
             {
-                crestIdx = rnd.Next(0, count);
+                crestIdx = rnd.Next(0, crestsList.Count);
                 newCrest = crestsList[crestIdx];
             }
+            // Logger.LogInfo($"Swapped to {newCrest.name}.");
             ToolItemManager.SetEquippedCrest(newCrest.name);
             ToolItemManager.SendEquippedChangedEvent(force: true);
         }
         // sometimes ResetAllCrestState seems to remove silk from the player
         __instance.playerData.silk = currentSilk;
-
+        //__instance.playerData.AddHealth(1); // for testing
+        cooldown = 0;
     }
+
+    [HarmonyPatch(typeof(HeroController), "FixedUpdate")]
+    [HarmonyPostfix]
+    private static void CanSwapCrest()
+    {
+        if (cooldown < 100) 
+            cooldown++;
+    }
+    
 
  }
 

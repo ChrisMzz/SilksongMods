@@ -9,7 +9,9 @@ There are probably places in which the game becomes impossible, in which case pl
 
 ## Install
 
-1. Install [BepInEx5 with Configuration Manager](https://www.nexusmods.com/hollowknightsilksong/mods/26) and extract it to the folder with your game executable, then run the game and exit.
-2. Download [this mod](https://www.nexusmods.com/hollowknightsilksong/mods/881) and extract it in your `BepInEx/plugins` folder.
+1. Install the [BepInExPack](https://thunderstore.io/c/hollow-knight-silksong/p/BepInEx/BepInExPack_Silksong/) for Silksong, following the instructions from over there.
+2. Install [this mod](https://thunderstore.io/c/hollow-knight-silksong/p/ChrisMzz/MenderbugsHaunting/).
+
+(Optional) If you want to benefit from config options of the mod, also install [BepInExConfigurationManager](https://thunderstore.io/c/hollow-knight-silksong/p/jakobhellermann/BepInExConfigurationManager/).
 
 Then run the game and enjoy!
