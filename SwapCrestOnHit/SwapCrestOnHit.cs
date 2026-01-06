@@ -1,12 +1,13 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+using GlobalEnums;
 using GlobalSettings;
 using HarmonyLib;
 using System;
 using System.Collections.Generic;
 
-[BepInPlugin("com.chrismzz.swapcrestonhit", "Swap Crest On Hit", "1.2.0")]
+[BepInPlugin("com.chrismzz.swapcrestonhit", "Swap Crest On Hit", "1.2.1")]
 
 public class SwapCrestOnHit : BaseUnityPlugin
 {
@@ -32,9 +33,9 @@ public class SwapCrestOnHit : BaseUnityPlugin
         Harmony.CreateAndPatchAll(typeof(SwapCrestOnHit), null);
     }
 
-    [HarmonyPatch(typeof(HeroController), nameof(HeroController.TakeDamage))]
+    [HarmonyPatch(typeof(HeroController), "HeroDamaged")]
     [HarmonyPostfix]
-    private static void TakeDamagePostfix(HeroController __instance)
+    private static void HeroDamagedPostfix(HeroController __instance)
     {
         if (cooldown < 100) { return;}
         int currentSilk = __instance.playerData.silk;
